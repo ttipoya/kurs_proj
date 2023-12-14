@@ -1,6 +1,5 @@
 from tkinter import *
 from tkinter.messagebox import showerror, showwarning, showinfo
-from functools import partial
 root= Tk()
 root.title("Меню авторизации")
 w = root.winfo_screenwidth()
@@ -12,80 +11,123 @@ root.resizable(False, False)
 canvas = Canvas(root, bg='white', width=1384, height=753)
 canvas.place(x=0, y=0)
 img = PhotoImage(file='Frame 1.png')
-root.withdraw()
 enabled = IntVar()
 x0, y0 = 50, 50
 x1, y1 = 150, 150
 radius = 20
-k = 77
+x_pred = 77
+y_pred = 77
 log_registr = StringVar()
 passwr_register = StringVar()
 login = StringVar()
 passw = StringVar()
-rastanovka = [[1,0,1,0,1,0,1,0],
-              [0,1,0,1,0,1,0,1],
-              [1,0,1,0,1,0,1,0],
-              [0,0,0,0,0,0,0,0],
-              [0,0,0,0,0,0,0,0],
+ngo = 1
+rastanovka = [[0,1,0,1,0,1,0,1],
               [1,0,1,0,1,0,1,0],
               [0,1,0,1,0,1,0,1],
-              [1,0,1,0,1,0,1,0]]
+              [0,0,0,0,0,0,0,0],
+              [0,0,0,0,0,0,0,0],
+              [-1,0,-1,0,-1,0,-1,0],
+              [0,-1,0,-1,0,-1,0,-1],
+              [-1,0,-1,0,-1,0,-1,0]]
+pol = [[0,0,0,0,0,0,0,0],
+        [0,0,0,0,0,0,0,0],
+        [0,0,0,0,0,0,1,0],
+        [0,0,0,0,0,0,0,0],
+        [0,0,0,0,0,0,0,0],
+        [0,0,0,0,0,0,0,0],
+        [0,0,0,0,0,0,0,0],
+        [0,0,0,0,0,0,0,0]]
 n = 0
-def check(y):
-    global k
-    if  pol[y - 1]['image'] == 'pyimage5':
-        if k == 77:
-            pol[y - 1]['bg'] = 'red'
-            k = y
-        else:
-            pol[k - 1]['bg'] = 'black'
-            pol[y-1]['bg'] = 'red'
-            k = y
-        print(k,y)
-        if pol[y - 10]['image'] == '':
-            pol[y - 10]['bg'] = 'red'
-        if pol[y - 8]['image'] == '':
-            pol[y - 8]['bg'] = 'red'
-        if pol[y+8]['image'] == '':
-            pol[y+8]['bg'] = 'red'
-        if pol[y+6]['image'] == '':
-            pol[y+6]['bg'] = 'red'
-    if pol[y - 1]['image'] == '' and pol[y - 1]['bg'] == 'red':
-        pol[k -1]['image'] = ''
-        pol[y - 1]['image'] = 'pyimage5'
-        pol[k - 1]['bg'] = 'black'
-        pol[y - 1]['bg'] = 'black'
-        pol[k+8]['bg'] = 'black'
-        pol[k + 6]['bg'] = 'black'
-        pol[k -8]['bg'] = 'black'
-        pol[k -10]['bg'] = 'black'
+def black_go():
+    pass
+def eog():
+    pass
+def check(i,x,y):
+    global ngo, i_last, poz,x_last,y_last,sred_x,sred_y,sred
+    print(i,'--------')
+    if ngo == 1:
+        kl[i]["bg"] = 'red'
+        ngo = 2
+        i_last = i
+        x_last = x
+        y_last = y
+    else:
+        if kl[i]['image'] != str(shash) and (i - i_last > 0) and rastanovka[x_last][y_last] == 1:
+            rastanovka[x_last][y_last] = 0
+            rastanovka[x][y] = 1
+            kl[i]['image'] = shash
+            kl[i_last]['bg'] = 'black'
+            kl[i_last]['image'] = ''
+            ngo = 1
+        elif kl[i]['image'] != str(shash) and (i - i_last < 0) and rastanovka[x_last][y_last] == -1:
+            rastanovka[x][y] = -1
+            rastanovka[x_last][y_last] = 0
+            kl[i]['image'] = shash
+            kl[i_last]['bg'] = 'black'
+            kl[i_last]['image'] = ''
+            ngo = 1
+        elif i - i_last < 0 and rastanovka[x_last][y_last] == 1:
+            showerror(title="Ошибка", message="неверно")
+            return
+        elif i - i_last > 0 and rastanovka[x_last][y_last] == -1:
+            showerror(title="Ошибка", message="неверно")
+            return
+        elif i == i_last:
+            kl[i]['bg'] = 'black'
+            ngo = 1
+        if abs(x - x_last) == 2 and abs(y -y_last) == 2 and rastanovka[x][y]==1:
+            if x - x_last == -2:
+                rastanovka[x-1][y+1] = 0
+            else:
+                rastanovka[x - 1][y - 1] = 0
+            if kl[i_last + 8 - 1]['image'] == '':
+                kl[i_last + 8 +1]['image'] = ''
+            else:
+                kl[i_last+8-1]['image'] = ''
+            print(i+8-1,'---+1----')
+        elif abs(x - x_last) == 2 and abs(y -y_last) == 2 and rastanovka[x][y]==-1:
+            if y -y_last == -2:
+                rastanovka[x-1][y+1] = 0
+            else:
+                rastanovka[x - 1][y - 1] = 0
+            if kl[i_last-8+1]['image'] == '':
+                kl[i_last - 8 -1]['image'] = ''
+            else:
+                kl[i_last-8+1]['image'] = ''
+            print(i_last - 8 - 1,'---_1---')
+
+
 def otris(canvas_igr,igr):
     canvas_igr.create_rectangle(340, 10, 1033, 705, fill="black", outline="black", tags='nastr')
-    global color
+    global kl
     l = 0
-    global pol
-    pol = []
     n = 350
     w = 20
-    for i in range(1, 9):
-        for j in range(1, 9):
-            l += 1
-            if i % 2 == 0:
-                if l % 2 ==0:
+    color = 'white'
+    kl = []  # рисуем доску
+    for i1 in range(8):
+        for j1 in range(8):
+            i = i1 * 8 + j1
+            if i1 % 2 != 0:
+                if i % 2 != 0:
                     color = "white"
                 else:
                     color = "black"
-            elif i % 2 != 0:
-                if l % 2 !=0 :
+            elif i1 % 2 == 0:
+                if i % 2 == 0:
                     color = "white"
                 else:
                     color = "black"
-            pol.append(Button(igr,bg=color, fg="white", activebackground="white", relief="flat",command= partial(check,l)))
-            if pol[l-1]['bg'] == 'white':
-                pol[l-1]['state'] = DISABLED
-            canvas_igr.create_window(n, w, anchor=NW, window=pol[l-1], width=80, height=80)
-            if l in [2,4,6,8,18,20,22,24,9,11,13,15,41,43,45,47,50,52,54,56,57,59,61,63]:
-                pol[l-1].config(image = shash)
+            if rastanovka[i1][j1] == 1 or rastanovka[i1][j1] == -1:
+                kl.append(Button(igr,bg=color, fg="black", activebackground="white", relief="flat",command=lambda i=i, i1=i1, j1=j1: check(i,i1,j1)))
+            else:
+                kl.append(Button(igr,bg=color, fg="white", activebackground="white", relief="flat",command=lambda i=i, i1=i1, j1=j1: check(i,i1,j1)))
+            if kl[i]['bg'] == 'white':
+                kl[i]['state'] = DISABLED
+            canvas_igr.create_window(n, w, anchor=NW, window=kl[l-1], width=80, height=80)
+            if i in [1,3,5,7,8,10,12,14,17,19,21,23,40,42,44,46,49,51,53,55,56,58,58, 65,60,62,62, 69]:
+                kl[i].config(image=shash)
             n += 85
         n = 350
         w += 85
@@ -222,6 +264,5 @@ def reg(login,passw):
     but_two = Button(root, text="Зарегистрируйся!!!", bg="white", fg="black", activebackground="white", font=("Compact 11 bold"),
                  relief='flat',command=registr, cursor="hand2")
     canvas.create_window(701, 480, anchor=NW, window=but_two, width=150, height=30)
-glav_menu()
-#reg(login,passw)
+reg(login,passw)
 root.mainloop()
