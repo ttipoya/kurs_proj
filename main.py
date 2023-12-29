@@ -21,7 +21,6 @@ log_registr = StringVar()
 passwr_register = StringVar()
 login = StringVar()
 passw = StringVar()
-root.withdraw()
 ngo = 1
 score_1 = 0
 score_2 = 0
@@ -388,6 +387,5 @@ def reg(login,passw):
     but_two = Button(root, text="Зарегистрируйся!!!", bg="white", fg="black", activebackground="white", font=("Compact 11 bold"),
                  relief='flat',command=registr, cursor="hand2")
     canvas.create_window(701, 480, anchor=NW, window=but_two, width=150, height=30)
-glav_menu()
-#reg(login,passw)
+reg(login,passw)
 root.mainloop()
