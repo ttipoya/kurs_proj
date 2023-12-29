@@ -21,7 +21,18 @@ log_registr = StringVar()
 passwr_register = StringVar()
 login = StringVar()
 passw = StringVar()
+root.withdraw()
 ngo = 1
+score_1 = 0
+score_2 = 0
+chet = 15
+hodim = -1
+i_last_last = 0
+x_last_last = 0
+y_last_last = 0
+check_dal = 0
+check_bliz = 0
+ch = 0
 rastanovka = [[0,1,0,1,0,1,0,1],
               [1,0,1,0,1,0,1,0],
               [0,1,0,1,0,1,0,1],
@@ -30,82 +41,193 @@ rastanovka = [[0,1,0,1,0,1,0,1],
               [-1,0,-1,0,-1,0,-1,0],
               [0,-1,0,-1,0,-1,0,-1],
               [-1,0,-1,0,-1,0,-1,0]]
-pol = [[0,0,0,0,0,0,0,0],
-        [0,0,0,0,0,0,0,0],
-        [0,0,0,0,0,0,1,0],
-        [0,0,0,0,0,0,0,0],
-        [0,0,0,0,0,0,0,0],
-        [0,0,0,0,0,0,0,0],
-        [0,0,0,0,0,0,0,0],
-        [0,0,0,0,0,0,0,0]]
+global kl,ves
+kl = []
+for i in range(8):
+    kl.append([0]*8)
+ves = [[1,2,3,4,5,6,7,8],
+        [9,10,11,12,13,14,15,16],
+        [17,18,19,20,21,22,23,24],
+        [25,26,27,28,29,30,31,32],
+        [33,34,35,36,37,38,39,40],
+        [41,42,43,44,45,46,47,48],
+        [49,50,51,52,53,54,55,56],
+        [57,58,59,60,61,62,63,64]]
 n = 0
-def black_go():
-    pass
-def eog():
-    pass
-def check(i,x,y):
-    global ngo, i_last, poz,x_last,y_last,sred_x,sred_y,sred
-    print(i,'--------')
-    if ngo == 1:
-        kl[i]["bg"] = 'red'
+suma_dal = 0
+suma_bliz = 0
+poz_bot_x = 0
+poz_bot_y = 0
+max_poz = 0
+def hod():
+    suma= 0
+    for i in range(8):
+        for j in range(8):
+            suma =rastanovka[i][j]
+    if suma == 1 or suma == -1 or chet == 0:
+        showinfo(title="", message="Игра окончена")
+        canvas_igr.destroy()
+        glavmenu.deiconify()
+def check_hod():
+    global hodim
+    if hodim == 1:
+        hodim = -1
+    else:
+        hodim = 1
+def bot():
+    for io in range(8):
+        for jo in range(8):
+            if kl[io][jo]['state'] == NORMAL and kl[io][jo]['image'] != '' and kl[io][jo]['bg'] != 'white':
+                polaz(io,jo,0,1)
+    check(0,poz_bot_x,poz_bot_y,0)
+    check(0, poz_bot_x_next, poz_bot_y_next,1)
+def polaz(x, y,clear,bot):
+    global ch,suma_bliz,suma_dal,poz_bot_x_next ,poz_bot_y_next ,max_poz,poz_bot_x,poz_bot_y
+    if clear == 1:
+        max_poz = 0
+        for i in range(((x + x_last) // 2) - 1, ((x + x_last) // 2) + 2):
+            for j in range(((y + y_last) // 2) - 1, ((y + y_last) // 2) + 2):
+                if i >= 0 and j >= 0 and i<8 and j<8 and i != x and j !=y and kl[i][j]['bg'] == '#8B2323':
+                    kl[i][j]['bg'] = 'black'
+                elif i >= 0  and j>=0 and i<8 and j<8 and i != x and j !=y and kl[i][j]['image'] != '' and kl[i][j]['bg'] == 'black':
+                    if (i + (i - x) >= 0) and (j + (j - y) >= 0) and (i + (i - x)) < 8 and (j + (j - y)) < 8 and i != x and j != y and kl[i + (i - x)][j + (j - y)]['bg'] == '#8B2323':
+                        kl[i + (i - x)][j + (j - y)]['bg'] = 'black'
+    elif clear == 0:
+            suma_bliz = 0
+            suma_dal = 0
+            for i in range(x-1,x+2):
+                for j in range(y-1,y+2):
+                    if (i >= 0 and j>=0 and i != x and j !=y and i<8 and j<8 and kl[i][j]['image'] == '' and kl[i][j]['bg'] == 'black') and check_dal == 0 and check_bliz == 0:
+                        if (x - i) != hodim:
+                            if bot == 0:
+                                kl[i][j]['bg'] = '#8B2323'
+                                suma_bliz += 1
+                                poz_bot_x_next = i
+                                poz_bot_y_next = j
+                            else:
+                                suma_bliz += 1
+                            if max_poz < ves[i][j] and suma_bliz > 0 and kl[i][j]['state'] == NORMAL and kl[x][y]['state'] == NORMAL:
+                                max_poz = ves[i][j]
+                                poz_bot_x = x
+                                poz_bot_y = y
+                                poz_bot_x_next = i
+                                poz_bot_y_next = j
+                    elif i >= 0 and j>=0 and i != x and j !=y and i<8 and j<8 and kl[i][j]['image'] != '' and  kl[i][j]['bg'] == 'black':
+                        if ((i+(i-x) >= 0) and (j+(j-y)>=0) and (i+(i-x))<8 and (j+(j-y))<8 and i != x and j !=y and kl[i+(i-x)][j+(j-y)]['image'] == '') and check_bliz == 0:
+                            if bot == 0:
+                                kl[i+(i-x)][j+(j-y)]['bg'] = '#8B2323'
+                                poz_bot_x_next = i + (i - x)
+                                poz_bot_y_next = j + (j - y)
+                                suma_dal += 1
+                            else:
+                                suma_dal += 1
+                            if max_poz < ves[i+(i-x)][j+(j-y)] and suma_dal>0 and kl[i][j]['state'] == NORMAL and kl[x][y]['state'] == NORMAL:
+                                max_poz = 999999
+                                poz_bot_x = x
+                                poz_bot_y = y
+                                poz_bot_x_next = i+(i-x)
+                                poz_bot_y_next = j+(j-y)
+    print(max_poz, poz_bot_x_next, poz_bot_y_next)
+
+def check(i,x,y,boti):
+    global ngo, i_last,x_last,y_last,sred_x,sred_y,sred,score_1,score_2,chet,i_last_last,hodim,x_last_last,y_last_last,ch,suma_dal,suma_bliz,igr,check_dal,check_bliz,l
+    if ngo == 1 and kl[x][y]['image'] != '':
         ngo = 2
         i_last = i
         x_last = x
         y_last = y
-    else:
-        if kl[i]['image'] != str(shash) and (i - i_last > 0) and rastanovka[x_last][y_last] == 1:
-            rastanovka[x_last][y_last] = 0
-            rastanovka[x][y] = 1
-            kl[i]['image'] = shash
-            kl[i_last]['bg'] = 'black'
-            kl[i_last]['image'] = ''
+        polaz(x,y,0,0)
+        if suma_dal == 0 and suma_bliz == 0:
+            showerror(title="Not", message="Ходов 0")
             ngo = 1
-        elif kl[i]['image'] != str(shash) and (i - i_last < 0) and rastanovka[x_last][y_last] == -1:
-            rastanovka[x][y] = -1
-            rastanovka[x_last][y_last] = 0
-            kl[i]['image'] = shash
-            kl[i_last]['bg'] = 'black'
-            kl[i_last]['image'] = ''
-            ngo = 1
-        elif i - i_last < 0 and rastanovka[x_last][y_last] == 1:
-            showerror(title="Ошибка", message="неверно")
+            ch = 0
             return
-        elif i - i_last > 0 and rastanovka[x_last][y_last] == -1:
-            showerror(title="Ошибка", message="неверно")
-            return
-        elif i == i_last:
-            kl[i]['bg'] = 'black'
+        if boti == 1:
+            ngo = 2
+            check(i,poz_bot_x_next,poz_bot_y_next,1)
+    elif ngo == 2 and kl[x_last][y_last]['image'] != '':
+        if abs(y - y_last) == 2 and kl[(x + x_last) // 2][(y + y_last) // 2]['image'] != '' and kl[x][y]['image'] == '':
+            kl[(x + x_last) // 2][(y + y_last) // 2]['image'] = ''
+            rastanovka[(x + x_last) // 2][(y + y_last) // 2] = 0
+            check_dal += 1
+            if hodim == -1:
+                score_1 += 1
+                canvas_igr.itemconfigure(sc_1, text=f"Cчёт первого игрока: {score_1}")
+                chet = 16
+                canvas_igr.itemconfigure(hodi, text=f'До конца{chet}')
+            elif hodim == 1:
+                score_2 += 1
+                canvas_igr.itemconfigure(sc_2, text=f"Cчёт второго игрока: {score_2}")
+                chet = 16
+                canvas_igr.itemconfigure(hodi, text=f'До конца{chet}')
+        elif x == x_last and y == y_last:
+            kl[x_last][y_last]['bg'] = 'black'
+            polaz(x_last, y_last,1,0)
+            if check_dal != 0:
+                check_hod()
+                ngo = 1
+                ch = 0
+                check_dal = 0
+                check_bliz = 0
+                x_last = 0
+                y_last = 0
+                return
+            else:
+                ngo = 1
+                return
+        elif kl[x][y]['image'] != '':
+            showerror(title="Not", message="Запрещено")
             ngo = 1
-        if abs(x - x_last) == 2 and abs(y -y_last) == 2 and rastanovka[x][y]==1:
-            if x - x_last == -2:
-                rastanovka[x-1][y+1] = 0
-            else:
-                rastanovka[x - 1][y - 1] = 0
-            if kl[i_last + 8 - 1]['image'] == '':
-                kl[i_last + 8 +1]['image'] = ''
-            else:
-                kl[i_last+8-1]['image'] = ''
-            print(i+8-1,'---+1----')
-        elif abs(x - x_last) == 2 and abs(y -y_last) == 2 and rastanovka[x][y]==-1:
-            if y -y_last == -2:
-                rastanovka[x-1][y+1] = 0
-            else:
-                rastanovka[x - 1][y - 1] = 0
-            if kl[i_last-8+1]['image'] == '':
-                kl[i_last - 8 -1]['image'] = ''
-            else:
-                kl[i_last-8+1]['image'] = ''
-            print(i_last - 8 - 1,'---_1---')
-
+            return
+        if kl[x][y]['bg'] == '#8B2323':
+            if abs(x-x_last) == 1:
+                check_bliz =1
+            chet -=1
+            canvas_igr.itemconfigure(hodi, text=f'До конца{chet}')
+            kl[x_last_last][y_last_last]['state'] = NORMAL
+            kl[x][y]['image'] = shash
+            kl[x][y]['bg'] = 'black'
+            kl[x_last][y_last]['image']= ''
+            rastanovka[x][y] = rastanovka[x_last][y_last]
+            rastanovka[x_last][y_last] = 0
+            polaz(x_last, y_last,1,0)
+            polaz(x, y, 0,0)
+            if suma_dal == 0 and suma_bliz == 0:
+                kl[x][y]['state'] = DISABLED
+                x_last_last = x
+                y_last_last = y
+                check_hod()
+                ngo = 1
+                ch = 0
+                polaz(x_last, y_last, 1,0)
+                check_dal = 0
+                check_bliz = 0
+                x_last = 0
+                y_last = 0
+                if boti != 1:
+                    bot()
+            elif suma_dal > 0 and suma_bliz == 0 and boti == 0:
+                ngo = 1
+                check(i,x,y,0)
+            elif suma_dal > 0 and suma_bliz == 0 and boti == 1:
+                ngo = 1
+                check(i, x, y, 1)
+        if y in [0,1,2,3,4,5,6,7,8] and ((x == 0 and hodim == 1) or (x == 7 and hodim == -1)):
+            kl[x][y]['image'] = shash_M
+            rastanovka[x][y] = 2
+    hod()
 
 def otris(canvas_igr,igr):
+    global sc_1,sc_2,hodi
+    canvas_igr.create_rectangle(1, 200, 500, 400, fill="white", outline="black", tags='nastr')
+    sc_1 = canvas_igr.create_text(180, 230, text=f"Cчёт первого игрока: {score_1}", font=("Compact 18 bold"), fill="black", tags='nastr')
+    sc_2 = canvas_igr.create_text(180, 300, text=f"Cчёт второго игрока: {score_2}", font=("Compact 18 bold"), fill="black", tags='nastr')
+    hodi = canvas_igr.create_text(180, 370, text=f'До конца: {chet}', font=("Compact 18 bold"), fill="black", tags='nastr')
     canvas_igr.create_rectangle(340, 10, 1033, 705, fill="black", outline="black", tags='nastr')
-    global kl
     l = 0
     n = 350
     w = 20
     color = 'white'
-    kl = []  # рисуем доску
     for i1 in range(8):
         for j1 in range(8):
             i = i1 * 8 + j1
@@ -120,20 +242,20 @@ def otris(canvas_igr,igr):
                 else:
                     color = "black"
             if rastanovka[i1][j1] == 1 or rastanovka[i1][j1] == -1:
-                kl.append(Button(igr,bg=color, fg="black", activebackground="white", relief="flat",command=lambda i=i, i1=i1, j1=j1: check(i,i1,j1)))
+                kl[i1][j1] = (Button(igr,bg=color, fg="black", activebackground="white", relief="flat",command=lambda i =i,i1=i1, j1=j1: check(i,i1,j1,0)))
             else:
-                kl.append(Button(igr,bg=color, fg="white", activebackground="white", relief="flat",command=lambda i=i, i1=i1, j1=j1: check(i,i1,j1)))
-            if kl[i]['bg'] == 'white':
-                kl[i]['state'] = DISABLED
-            canvas_igr.create_window(n, w, anchor=NW, window=kl[l-1], width=80, height=80)
+                kl[i1][j1] = (Button(igr,bg=color, fg="white", activebackground="white", relief="flat",command=lambda i=i,i1=i1, j1=j1: check(i,i1,j1,0)))
+            if kl[i1][j1]['bg'] == 'white':
+                kl[i1][j1]['state'] = DISABLED
+            canvas_igr.create_window(n, w, anchor=NW, window=kl[i1][j1], width=80, height=80)
             if i in [1,3,5,7,8,10,12,14,17,19,21,23,40,42,44,46,49,51,53,55,56,58,58, 65,60,62,62, 69]:
-                kl[i].config(image=shash)
+                kl[i1][j1].config(image=shash)
             n += 85
         n = 350
         w += 85
 def igra(glavmenu):
     global color
-    glavmenu.destroy()
+    glavmenu.withdraw()
     igr = Tk()
     igr.title("Шашки Артамонова")
     igr.geometry(f"1384x753+{wh}+{hh}")
@@ -142,9 +264,11 @@ def igra(glavmenu):
     canvas_igr = Canvas(igr, bg='white', width=1384, height=753)
     canvas_igr.place(x=0, y=0)
     img_igr = PhotoImage(master=canvas_igr, file='Frame 1.png')
-    global shash
+    global shash,shash_M
     shash = PhotoImage(master=canvas_igr, file='Group 8.png')
     shash = shash.subsample(2, 2)
+    shash_M = PhotoImage(master=canvas_igr, file='Group М.png')
+    shash_M = shash_M.subsample(2, 2)
     canvas_igr.create_image(0, 0, anchor='nw', image=img_igr)
     otris(canvas_igr,igr)
     igr.mainloop()
@@ -264,5 +388,6 @@ def reg(login,passw):
     but_two = Button(root, text="Зарегистрируйся!!!", bg="white", fg="black", activebackground="white", font=("Compact 11 bold"),
                  relief='flat',command=registr, cursor="hand2")
     canvas.create_window(701, 480, anchor=NW, window=but_two, width=150, height=30)
-reg(login,passw)
+glav_menu()
+#reg(login,passw)
 root.mainloop()
