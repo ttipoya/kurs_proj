@@ -389,11 +389,16 @@ def otris(canvas_igr,igr):
         mat_knopok.append([0] * 8)
     global sc_1,sc_2,hodi
     #-------------------------------отрисовка фона поля и текста-------------------------------
-    canvas_igr.create_rectangle(1, 200, 500, 400, fill="white", outline="black", tags='nastr')
-    sc_1 = canvas_igr.create_text(180, 230, text=f"Cчёт первого игрока: {score_igrok}", font=("Compact 18 bold"), fill="black", tags='nastr')
-    sc_2 = canvas_igr.create_text(180, 300, text=f"Cчёт второго игрока: {score_bot}", font=("Compact 18 bold"), fill="black", tags='nastr')
-    hodi = canvas_igr.create_text(180, 370, text=f'До конца: {chet_do_konca}', font=("Compact 18 bold"), fill="black", tags='nastr')
-    canvas_igr.create_rectangle(340, 10, 1033, 705, fill="black", outline="black", tags='nastr')
+    canvas_igr.create_rectangle(2, 200, 200, 400, fill="white", outline="black")
+    sc_1 = canvas_igr.create_text(105, 230, text=f"Cчёт игрока: {score_igrok}", font=("Compact 18 bold"), fill="black")
+    sc_2 = canvas_igr.create_text(110, 300, text=f"Cчёт бота: {score_bot}", font=("Compact 18 bold"), fill="black")
+    hodi = canvas_igr.create_text(105, 370, text=f'До конца: {chet_do_konca}', font=("Compact 18 bold"), fill="black")
+    canvas_igr.create_rectangle(340, 10, 1033, 705, fill="black", outline="black")
+    canvas_igr.create_text(695, 720, text=f'a        b        c        d        e        f        g       h', font=("Compact 25 bold"), fill="black")
+    canvas_igr.create_text(320, 660, text=f'1', font=("Compact 25 bold"), fill="black");canvas_igr.create_text(320, 570, text=f'2', font=("Compact 25 bold"), fill="black")
+    canvas_igr.create_text(320, 480, text=f'3', font=("Compact 25 bold"), fill="black");canvas_igr.create_text(320, 400, text=f'4', font=("Compact 25 bold"), fill="black")
+    canvas_igr.create_text(320, 310, text=f'5', font=("Compact 25 bold"), fill="black");canvas_igr.create_text(320, 230, text=f'6', font=("Compact 25 bold"), fill="black")
+    canvas_igr.create_text(320, 150, text=f'7', font=("Compact 25 bold"), fill="black");canvas_igr.create_text(320, 65, text=f'8', font=("Compact 25 bold"), fill="black")
     n = 350;w = 20
     color = 'white'
     #-------------------------------отрисовка поля и раставление шашек-------------------------------
